@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
+    "moduleResolution": "node",
+    "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -10,12 +11,16 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"]
+    },
+    "strict": true,
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true
   }
 }
