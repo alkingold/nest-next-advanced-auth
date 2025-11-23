@@ -12,7 +12,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": ["src/*"],
+      "@prisma/generated": ["prisma/generated"],
+      "@prisma/generated/*": ["prisma/generated/*"]
     },
     "strict": true,
     "incremental": true,
