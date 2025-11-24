@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import connectionsConfig from '@src/config/connections.config';
 import { IS_DEV_ENV } from '@src/libs/common/utils/is-dev.util';
 
+import { PrismaModule } from './prisma/prisma.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -10,6 +12,7 @@ import { IS_DEV_ENV } from '@src/libs/common/utils/is-dev.util';
       isGlobal: true,
       load: [connectionsConfig],
     }),
+    PrismaModule,
   ],
 })
 export class AppModule {}
