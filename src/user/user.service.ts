@@ -35,10 +35,6 @@ export class UserService {
       },
     });
 
-    if (!user) {
-      throw new NotFoundException('User not found, please check entered data');
-    }
-
     return user;
   }
 
@@ -50,7 +46,7 @@ export class UserService {
     method: AuthMethod,
     isVerified: boolean,
   ) {
-    const user = this.prismaService.user.create({
+    const user = await this.prismaService.user.create({
       data: {
         email,
         password: password ? await hash(password) : '',
