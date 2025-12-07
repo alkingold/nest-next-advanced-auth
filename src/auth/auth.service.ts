@@ -4,6 +4,8 @@ import { Request, Response } from 'express';
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -13,6 +15,7 @@ import { User } from '@prisma/generated/client';
 import { AuthMethod } from '@prisma/generated/enums';
 import { LoginDto } from '@src/auth/dto/login.dto';
 import { RegisterDto } from '@src/auth/dto/register.dto';
+import { EmailConfirmationService } from '@src/auth/email-confirmation/email-confirmation.service';
 import { ProviderService } from '@src/auth/provider/provider.service';
 import { SessionUtils } from '@src/libs/common/utils/SessionUtils';
 import { UserService } from '@src/user/user.service';
@@ -26,6 +29,9 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly providerService: ProviderService,
     private readonly prismaService: PrismaService,
+
+    @Inject(forwardRef(() => EmailConfirmationService))
+    private readonly emailConfirmationService: EmailConfirmationService,
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
@@ -50,7 +56,12 @@ export class AuthService {
       isVerified,
     );
 
-    return this.saveSession(req, newUser);
+    await this.emailConfirmationService.sendVerificationToken(newUser);
+
+    return {
+      message:
+        'Registration successful. Please confirm your email address. A message was sent to your address.',
+    };
   }
 
   public async extractProfileFromCode(
@@ -192,6 +203,14 @@ export class AuthService {
       );
     }
 
+    if (!user.isVerified) {
+      await this.emailConfirmationService.sendVerificationToken(user);
+
+      throw new UnauthorizedException(
+        'Your email is not confirmed. Please check your mail box and confirm your email.',
+      );
+    }
+
     return this.saveSession(req, user);
   }
 
@@ -201,7 +220,7 @@ export class AuthService {
     res.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
   }
 
-  private async saveSession(req: Request, user: User): Promise<{ user: User }> {
+  public async saveSession(req: Request, user: User): Promise<{ user: User }> {
     req.session.userId = user.id;
     const session = new SessionUtils(req);
     await session.safeSessionSave();
