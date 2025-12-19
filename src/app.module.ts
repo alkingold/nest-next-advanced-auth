@@ -6,6 +6,7 @@ import { PrismaModule } from '@src/prisma/prisma.module';
 
 import { AuthModule } from './auth/auth.module';
 import { EmailConfirmationModule } from './auth/email-confirmation/email-confirmation.module';
+import { PasswordRecoveryModule } from './auth/password-recovery/password-recovery.module';
 import { ProviderModule } from './auth/provider/provider.module';
 import { MailModule } from './libs/mail/mail.module';
 import { UserModule } from './user/user.module';
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module';
     ProviderModule,
     MailModule,
     EmailConfirmationModule,
+    PasswordRecoveryModule,
   ],
 })
 export class AppModule {}
