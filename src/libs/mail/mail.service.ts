@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { render } from '@react-email/components';
 import { ConfirmationTemplate } from '@src/libs/mail/templates/confirmation.template';
+import { ResetPasswordTemplate } from '@src/libs/mail/templates/reset-password.template';
 
 @Injectable()
 export class MailService {
@@ -17,6 +18,14 @@ export class MailService {
     const template = await render(ConfirmationTemplate({ domain, token }));
 
     return this.sendMail(email, 'Email Confirmation', template);
+  }
+
+  public async sendPasswordResetEmail(email: string, token: string) {
+    const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN');
+
+    const template = await render(ResetPasswordTemplate({ domain, token }));
+
+    return this.sendMail(email, 'Reset Password', template);
   }
 
   private sendMail(email: string, subject: string, html: string) {
