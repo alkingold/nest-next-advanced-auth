@@ -17,6 +17,7 @@ import { LoginDto } from '@src/auth/dto/login.dto';
 import { RegisterDto } from '@src/auth/dto/register.dto';
 import { EmailConfirmationService } from '@src/auth/email-confirmation/email-confirmation.service';
 import { ProviderService } from '@src/auth/provider/provider.service';
+import { TwoFactorAuthService } from '@src/auth/two-factor-auth/two-factor-auth.service';
 import { SessionUtils } from '@src/libs/common/utils/SessionUtils';
 import { UserService } from '@src/user/user.service';
 
@@ -32,6 +33,7 @@ export class AuthService {
 
     @Inject(forwardRef(() => EmailConfirmationService))
     private readonly emailConfirmationService: EmailConfirmationService,
+    private readonly twoFactorAuthService: TwoFactorAuthService,
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
@@ -56,7 +58,7 @@ export class AuthService {
       isVerified,
     );
 
-    await this.emailConfirmationService.sendVerificationToken(newUser);
+    await this.emailConfirmationService.sendVerificationToken(newUser.email);
 
     return {
       message:
@@ -204,10 +206,29 @@ export class AuthService {
     }
 
     if (!user.isVerified) {
-      await this.emailConfirmationService.sendVerificationToken(user);
+      await this.emailConfirmationService.sendVerificationToken(user.email);
 
       throw new UnauthorizedException(
         'Your email is not confirmed. Please check your mail box and confirm your email.',
+      );
+    }
+
+    // Handle two factor authentication
+    if (user.isTwoFactorEnabled) {
+      // Send code to the email if not provided
+      if (!dto.code) {
+        await this.twoFactorAuthService.sendTwoFactorToken(user.email);
+
+        return {
+          message:
+            'Please check your email. Two factor authentication code is needed.',
+        };
+      }
+
+      // Check if provided code is valid
+      await this.twoFactorAuthService.validateTwoFactorToken(
+        user.email,
+        dto.code,
       );
     }
 
