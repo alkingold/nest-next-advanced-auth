@@ -7,7 +7,7 @@ export const getMailerConfig = async (
 ): Promise<MailerOptions> => ({
   transport: {
     host: configService.getOrThrow<string>('MAIL_HOST'),
-    port: configService.getOrThrow<number>('MAIL_PORT'),
+    port: configService.getOrThrow<number>('MAIL_SMTP_PORT'),
     secure: !isDev(configService),
     auth: {
       user: configService.getOrThrow<string>('MAIL_LOGIN'),

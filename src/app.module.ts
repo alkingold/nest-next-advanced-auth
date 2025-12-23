@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { EmailConfirmationModule } from './auth/email-confirmation/email-confirmation.module';
 import { PasswordRecoveryModule } from './auth/password-recovery/password-recovery.module';
 import { ProviderModule } from './auth/provider/provider.module';
+import { TwoFactorAuthModule } from './auth/two-factor-auth/two-factor-auth.module';
 import { MailModule } from './libs/mail/mail.module';
 import { UserModule } from './user/user.module';
 
@@ -25,6 +26,7 @@ import { UserModule } from './user/user.module';
     MailModule,
     EmailConfirmationModule,
     PasswordRecoveryModule,
+    TwoFactorAuthModule,
   ],
 })
 export class AppModule {}
