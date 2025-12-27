@@ -1,3 +1,4 @@
+import { PrismaService } from '../prisma/prisma.service';
 import { verify } from 'argon2';
 import { Request, Response } from 'express';
 
@@ -11,8 +12,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/generated/client';
-import { AuthMethod } from '@prisma/generated/enums';
+import { AuthMethod, User } from '@prisma/generated/browser';
 import { LoginDto } from '@src/auth/dto/login.dto';
 import { RegisterDto } from '@src/auth/dto/register.dto';
 import { EmailConfirmationService } from '@src/auth/email-confirmation/email-confirmation.service';
@@ -20,8 +20,6 @@ import { ProviderService } from '@src/auth/provider/provider.service';
 import { TwoFactorAuthService } from '@src/auth/two-factor-auth/two-factor-auth.service';
 import { SessionUtils } from '@src/libs/common/utils/SessionUtils';
 import { UserService } from '@src/user/user.service';
-
-import { PrismaService } from './../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {

@@ -1,3 +1,4 @@
+import { TokenType } from '../../../prisma/generated/enums';
 import { hash } from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,8 +12,6 @@ import {
 import { MailService } from '@src/libs/mail/mail.service';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { UserService } from '@src/user/user.service';
-
-import { TokenType } from './../../../prisma/generated/enums';
 
 @Injectable()
 export class PasswordRecoveryService {
