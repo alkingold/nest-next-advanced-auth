@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { type PropsWithChildren } from 'react';
 
-import AuthSocial from '@/features/auth/components/AuthSocial';
-
 import {
   Button,
   Card,
@@ -13,6 +11,8 @@ import {
   CardTitle,
 } from '@/shared/components/ui';
 
+import { AuthSocial } from './AuthSocial';
+
 interface AuthWrapperProps {
   heading: string;
   description?: string;
@@ -21,7 +21,7 @@ interface AuthWrapperProps {
   isShowSocialAuth?: boolean;
 }
 
-const AuthWrapper = ({
+export const AuthWrapper = ({
   children,
   heading,
   description,
@@ -49,5 +49,3 @@ const AuthWrapper = ({
     </Card>
   );
 };
-
-export default AuthWrapper;
