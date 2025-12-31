@@ -1,6 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTheme } from 'next-themes';
+import { useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
 
 import { RegisterSchema, RegisterSchemaType } from '@/features/auth/schemas';
@@ -19,6 +22,8 @@ import {
 import { AuthWrapper } from './AuthWrapper';
 
 export const RegisterForm = () => {
+  const { resolvedTheme } = useTheme();
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
     mode: 'onChange',
@@ -31,6 +36,12 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = (values: RegisterSchemaType) => {
+    if (!recaptchaValue) {
+      console.log('No reCAPTCHA value');
+      alert('Please complete the reCAPTCHA');
+      return;
+    }
+
     console.log(values);
   };
 
@@ -118,9 +129,20 @@ export const RegisterForm = () => {
               </FormItem>
             )}
           />
+          <div className='flex justify-center'>
+            <ReCAPTCHA
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+              onChange={(value) => setRecaptchaValue(value)}
+              theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+            />
+          </div>
           <Button
             type='submit'
-            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            disabled={
+              !form.formState.isValid ||
+              form.formState.isSubmitting ||
+              !recaptchaValue
+            }
           >
             {form.formState.isSubmitting
               ? 'Creating account...'
