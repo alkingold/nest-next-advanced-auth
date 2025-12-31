@@ -2,10 +2,10 @@ import { FaGoogle, FaYandex } from 'react-icons/fa';
 
 import { Button } from '@/shared/components/ui';
 
-const AuthSocial = () => {
+export const AuthSocial = () => {
   return (
     <>
-      <div className='grid grid-cols-2 gap-6'>
+      <div className='mb-4 grid grid-cols-2 gap-6'>
         <Button variant='outline'>
           <FaGoogle className='mr-2 size-4' />
           Google
@@ -26,5 +26,3 @@ const AuthSocial = () => {
     </>
   );
 };
-
-export default AuthSocial;
