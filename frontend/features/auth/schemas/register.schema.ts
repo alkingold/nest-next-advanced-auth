@@ -20,7 +20,7 @@ export const RegisterSchema = z
     password: z
       .string()
       .min(6, {
-        message: 'Password must be at least 6 characters long',
+        message: 'Password must contain at least 6 characters',
       })
       .max(128, {
         message: 'Password must be at most 128 characters long',
@@ -28,10 +28,10 @@ export const RegisterSchema = z
     passwordRepeat: z
       .string()
       .min(6, {
-        message: 'Password confirmation must be at least 6 characters long',
+        message: 'Password confirmation must contain at least 6 characters',
       })
       .max(128, {
-        message: 'Password must be at most 128 characters long',
+        message: 'Password confirmation must be at most 128 characters long',
       }),
   })
   .refine((data) => data.password === data.passwordRepeat, {
