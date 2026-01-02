@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { RegisterSchema, RegisterSchemaType } from '@/features/auth/schemas';
 
@@ -37,12 +38,12 @@ export const RegisterForm = () => {
 
   const onSubmit = (values: RegisterSchemaType) => {
     if (!recaptchaValue) {
-      console.log('No reCAPTCHA value');
-      alert('Please complete the reCAPTCHA');
+      toast.error('reCAPTCHA verification is required.');
       return;
     }
 
-    console.log(values);
+    console.log('Register form values:', values);
+    toast.success('Account created successfully! (not really, this is a demo)');
   };
 
   return (
