@@ -1,7 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTheme } from 'next-themes';
+import { useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   LoginSchema,
@@ -22,6 +26,8 @@ import {
 import { AuthWrapper } from './AuthWrapper';
 
 export function LoginForm() {
+  const { resolvedTheme } = useTheme();
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
     mode: 'onChange',
@@ -32,7 +38,13 @@ export function LoginForm() {
   });
 
   const onSubmit = (values: LoginSchemaType) => {
+    if (!recaptchaValue) {
+      toast.error('reCAPTCHA verification is required.');
+      return;
+    }
+
     console.log(values);
+    toast.success('Logged in successfully! (not really, this is a demo)');
   };
 
   return (
@@ -78,9 +90,20 @@ export function LoginForm() {
               </FormItem>
             )}
           />
+          <div className='flex justify-center'>
+            <ReCAPTCHA
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+              onChange={(value) => setRecaptchaValue(value)}
+              theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+            />
+          </div>
           <Button
             type='submit'
-            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            disabled={
+              !form.formState.isValid ||
+              form.formState.isSubmitting ||
+              !recaptchaValue
+            }
           >
             {form.formState.isSubmitting ? 'Logging in...' : 'Login'}
           </Button>
