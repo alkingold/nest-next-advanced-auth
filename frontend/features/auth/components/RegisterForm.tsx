@@ -7,6 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useRegisterMutation } from '@/features/auth/hooks';
 import { RegisterSchema, RegisterSchemaType } from '@/features/auth/schemas';
 
 import {
@@ -36,14 +37,15 @@ export const RegisterForm = () => {
     },
   });
 
+  const { register, isLoadingRegister } = useRegisterMutation();
+
   const onSubmit = (values: RegisterSchemaType) => {
     if (!recaptchaValue) {
       toast.error('reCAPTCHA verification is required.');
       return;
     }
 
-    console.log('Register form values:', values);
-    toast.success('Account created successfully! (not really, this is a demo)');
+    register({ values, recaptcha: recaptchaValue });
   };
 
   return (
@@ -69,6 +71,7 @@ export const RegisterForm = () => {
                   <Input
                     placeholder='Your name'
                     autoComplete='name'
+                    disabled={isLoadingRegister}
                     {...field}
                   />
                 </FormControl>
@@ -87,6 +90,7 @@ export const RegisterForm = () => {
                     type='email'
                     autoComplete='email'
                     placeholder='Your email'
+                    disabled={isLoadingRegister}
                     {...field}
                   />
                 </FormControl>
@@ -105,6 +109,7 @@ export const RegisterForm = () => {
                     type='password'
                     autoComplete='new-password'
                     placeholder='******'
+                    disabled={isLoadingRegister}
                     {...field}
                   />
                 </FormControl>
@@ -123,6 +128,7 @@ export const RegisterForm = () => {
                     type='password'
                     autoComplete='new-password'
                     placeholder='******'
+                    disabled={isLoadingRegister}
                     {...field}
                   />
                 </FormControl>
@@ -142,7 +148,8 @@ export const RegisterForm = () => {
             disabled={
               !form.formState.isValid ||
               form.formState.isSubmitting ||
-              !recaptchaValue
+              !recaptchaValue ||
+              isLoadingRegister
             }
           >
             {form.formState.isSubmitting
