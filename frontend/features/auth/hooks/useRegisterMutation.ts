@@ -3,8 +3,10 @@ import { toast } from 'sonner';
 
 import { RegisterDto } from '@/features/auth/dtos';
 import { authService } from '@/features/auth/services';
+import { hasMessage } from '@/features/auth/types/auth.guards';
 
-import { toastMessageHandler } from '@/shared/utils/toastMessageHandler';
+import { messageToast } from '@/shared/utils';
+import { errorMessageToast } from '@/shared/utils/errorMessageToast';
 
 type RegisterMutationInputType = {
   values: RegisterDto;
@@ -16,13 +18,17 @@ export function useRegisterMutation() {
     mutationKey: ['register user'],
     mutationFn: ({ values, recaptcha }: RegisterMutationInputType) =>
       authService.register(values, recaptcha),
-    onSuccess: () => {
-      toast.success('Account created successfully!', {
-        description: 'Please visit your mail to confirm your email address.',
-      });
+    onSuccess: (data) => {
+      if (hasMessage(data)) {
+        messageToast(data);
+      } else {
+        toast.success('Account created successfully!', {
+          description: 'Please visit your mail to confirm your email address.',
+        });
+      }
     },
     onError: (error: unknown) => {
-      toastMessageHandler(error);
+      errorMessageToast(error);
     },
   });
 

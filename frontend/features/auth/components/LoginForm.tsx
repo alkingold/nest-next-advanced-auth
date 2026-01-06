@@ -7,6 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useLoginMutation } from '@/features/auth/hooks';
 import {
   LoginSchema,
   LoginSchemaType,
@@ -26,6 +27,7 @@ import {
 import { AuthWrapper } from './AuthWrapper';
 
 export function LoginForm() {
+  const { login, isLoadingLogin } = useLoginMutation();
   const { resolvedTheme } = useTheme();
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
   const form = useForm<LoginSchemaType>({
@@ -44,7 +46,7 @@ export function LoginForm() {
     }
 
     console.log(values);
-    toast.success('Logged in successfully! (not really, this is a demo)');
+    login({ values, recaptcha: recaptchaValue });
   };
 
   return (
@@ -67,7 +69,11 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete='email' />
+                  <Input
+                    {...field}
+                    autoComplete='email'
+                    disabled={isLoadingLogin}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,6 +89,7 @@ export function LoginForm() {
                   <Input
                     type='password'
                     autoComplete='current-password'
+                    disabled={isLoadingLogin}
                     {...field}
                   />
                 </FormControl>
@@ -102,7 +109,8 @@ export function LoginForm() {
             disabled={
               !form.formState.isValid ||
               form.formState.isSubmitting ||
-              !recaptchaValue
+              !recaptchaValue ||
+              isLoadingLogin
             }
           >
             {form.formState.isSubmitting ? 'Logging in...' : 'Login'}
