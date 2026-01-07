@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-import { AuthActionType } from '@/features/auth/types/auth-response.types';
+import { AuthActionType } from '@/features/auth/types';
 
 export function messageToast(data: AuthActionType) {
   const [title, ...rest] = data.message.split('. ');

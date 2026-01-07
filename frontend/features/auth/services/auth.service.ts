@@ -1,11 +1,15 @@
 import { LoginDto, RegisterDto } from '@/features/auth/dtos';
-import { AuthActionType } from '@/features/auth/types/auth-response.types';
-import { IUser } from '@/features/auth/types/user.types';
+import {
+  AuthActionType,
+  IUser,
+  OAuthProviderType,
+  OAuthRedirectResponse,
+} from '@/features/auth/types';
 
 import { api } from '@/shared/api';
 
 class AuthService {
-  public async register(body: RegisterDto, recaptcha?: string) {
+  public register(body: RegisterDto, recaptcha?: string) {
     const headers = recaptcha
       ? {
           'X-Recaptcha-Token': recaptcha,
@@ -19,7 +23,11 @@ class AuthService {
     );
   }
 
-  public async login(body: LoginDto, recaptcha?: string) {
+  public oauthByProvider(provider: OAuthProviderType) {
+    return api.get<OAuthRedirectResponse>(`auth/oauth/connect/${provider}`);
+  }
+
+  public login(body: LoginDto, recaptcha?: string) {
     const headers = recaptcha
       ? {
           'X-Recaptcha-Token': recaptcha,
@@ -31,7 +39,7 @@ class AuthService {
     });
   }
 
-  public async logout() {
+  public logout() {
     return api.post('auth/logout');
   }
 }
