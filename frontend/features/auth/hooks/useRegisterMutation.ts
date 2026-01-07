@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { RegisterDto } from '@/features/auth/dtos';
 import { authService } from '@/features/auth/services';
-import { hasMessage } from '@/features/auth/types/auth.guards';
+import { hasMessage } from '@/features/auth/types';
 
 import { messageToast } from '@/shared/utils';
 import { errorMessageToast } from '@/shared/utils/errorMessageToast';
