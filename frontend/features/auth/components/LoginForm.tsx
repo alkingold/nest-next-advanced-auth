@@ -2,11 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 import { useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { THEME_DARK, THEME_LIGHT } from '@/features/auth/constants';
 import { useLoginMutation } from '@/features/auth/hooks';
 import {
   LoginSchema,
@@ -67,7 +69,16 @@ export function LoginForm() {
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <div className='flex items-center'>
+                  <FormLabel>Email</FormLabel>
+                  <Link
+                    href='/auth/reset-password'
+                    className='ml-auto inline-block text-sm underline'
+                  >
+                    Forgot your password ?
+                  </Link>
+                </div>
+
                 <FormControl>
                   <Input
                     {...field}
@@ -101,7 +112,7 @@ export function LoginForm() {
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
               onChange={(value) => setRecaptchaValue(value)}
-              theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+              theme={resolvedTheme === THEME_DARK ? THEME_DARK : THEME_LIGHT}
             />
           </div>
           <Button
