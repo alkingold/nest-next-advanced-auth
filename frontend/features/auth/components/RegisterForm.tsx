@@ -7,6 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { THEME_DARK, THEME_LIGHT } from '@/features/auth/constants';
 import { useRegisterMutation } from '@/features/auth/hooks';
 import { RegisterSchema, RegisterSchemaType } from '@/features/auth/schemas';
 
@@ -140,7 +141,7 @@ export const RegisterForm = () => {
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
               onChange={(value) => setRecaptchaValue(value)}
-              theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+              theme={resolvedTheme === THEME_DARK ? THEME_DARK : THEME_LIGHT}
             />
           </div>
           <Button
