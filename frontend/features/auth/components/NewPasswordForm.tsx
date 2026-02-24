@@ -7,12 +7,12 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { AuthWrapper } from '@/features/auth/components';
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { THEME_DARK, THEME_LIGHT } from '@/features/auth/constants';
-import { usePasswordRecoveryMutation } from '@/features/auth/hooks';
+import { useNewPasswordMutation } from '@/features/auth/hooks';
 import {
-  PasswordRecoverySchema,
-  PasswordRecoverySchemaType,
+  NewPasswordSchema,
+  NewPasswordSchemaType,
 } from '@/features/auth/schemas';
 
 import {
@@ -22,39 +22,37 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   Input,
 } from '@/shared/components/ui';
 
-export function ResetPasswordForm() {
+export function NewPasswordForm() {
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
   const { resolvedTheme } = useTheme();
 
-  const form = useForm<PasswordRecoverySchemaType>({
-    resolver: zodResolver(PasswordRecoverySchema),
+  const form = useForm<NewPasswordSchemaType>({
+    resolver: zodResolver(NewPasswordSchema),
     mode: 'onChange',
     defaultValues: {
-      email: '',
+      password: '',
     },
   });
 
-  const { resetPassword, isLoadingResetPassword } =
-    usePasswordRecoveryMutation();
+  const { createNewPassword, isLoadingNewPassword } = useNewPasswordMutation();
 
-  const onSubmit = (values: PasswordRecoverySchemaType) => {
+  const onSubmit = (values: NewPasswordSchemaType) => {
     if (!recaptchaValue) {
       toast.error('reCAPTCHA verification is required');
       return;
     }
 
-    resetPassword({ values, recaptcha: recaptchaValue });
+    createNewPassword({ values, recaptcha: recaptchaValue });
   };
 
   return (
     <AuthWrapper
-      heading='Reset Password'
-      description='Please enter your email to reset password'
-      backButtonLabel='Go to login'
+      heading='Create New Password'
+      description='Please enter your new password'
+      backButtonLabel='Back to login'
       backButtonHref='/auth/login'
     >
       <Form {...form}>
@@ -64,22 +62,22 @@ export function ResetPasswordForm() {
         >
           <FormField
             control={form.control}
-            name='email'
+            name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>New Password</FormLabel>
                 <FormControl>
                   <Input
+                    type='password'
                     {...field}
-                    autoComplete='email'
-                    disabled={isLoadingResetPassword}
+                    placeholder='******'
+                    disabled={isLoadingNewPassword}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
-          <div className='flex justify-center'>
+          <div>
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
               onChange={setRecaptchaValue}
@@ -92,10 +90,10 @@ export function ResetPasswordForm() {
               !form.formState.isValid ||
               form.formState.isSubmitting ||
               !recaptchaValue ||
-              isLoadingResetPassword
+              isLoadingNewPassword
             }
           >
-            {form.formState.isSubmitting ? 'Resetting...' : 'Reset'}
+            {form.formState.isSubmitting ? 'Creating...' : 'Create'}
           </Button>
         </form>
       </Form>
