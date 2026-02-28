@@ -29,9 +29,11 @@ import {
 import { AuthWrapper } from './AuthWrapper';
 
 export function LoginForm() {
-  const { login, isLoadingLogin } = useLoginMutation();
   const { resolvedTheme } = useTheme();
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+  const [isShowTwoFactor, setIsShowTwoFactor] = useState<boolean>(false);
+
+  const { login, isLoadingLogin } = useLoginMutation(setIsShowTwoFactor);
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
     mode: 'onChange',
@@ -47,7 +49,6 @@ export function LoginForm() {
       return;
     }
 
-    console.log(values);
     login({ values, recaptcha: recaptchaValue });
   };
 
@@ -64,50 +65,74 @@ export function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className='grid gap-2 space-y-2'
         >
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <div className='flex items-center'>
-                  <FormLabel>Email</FormLabel>
-                  <Link
-                    href='/auth/reset-password'
-                    className='ml-auto inline-block text-sm underline'
-                  >
-                    Forgot your password ?
-                  </Link>
-                </div>
+          {isShowTwoFactor ? (
+            <FormField
+              control={form.control}
+              name='code'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Please enter your two factor authentication code
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder='123456'
+                      disabled={isLoadingLogin}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          ) : (
+            <>
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='flex items-center'>
+                      <FormLabel>Email</FormLabel>
+                      <Link
+                        href='/auth/reset-password'
+                        className='ml-auto inline-block text-sm underline'
+                      >
+                        Forgot your password ?
+                      </Link>
+                    </div>
 
-                <FormControl>
-                  <Input
-                    {...field}
-                    autoComplete='email'
-                    disabled={isLoadingLogin}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='password'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type='password'
-                    autoComplete='current-password'
-                    disabled={isLoadingLogin}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormControl>
+                      <Input
+                        {...field}
+                        autoComplete='email'
+                        disabled={isLoadingLogin}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='password'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='password'
+                        autoComplete='current-password'
+                        disabled={isLoadingLogin}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
+
           <div className='flex justify-center'>
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}

@@ -16,6 +16,11 @@ export const LoginSchema = z.object({
     .max(128, {
       message: 'Password must be at most 128 characters long',
     }),
+  code: z
+    .string()
+    .length(6, { message: 'Invalid 2FA code' })
+    .regex(/^\d+$/, { message: 'Invalid 2FA code' })
+    .optional(),
 });
 
 export type LoginSchemaType = z.infer<typeof LoginSchema>;
