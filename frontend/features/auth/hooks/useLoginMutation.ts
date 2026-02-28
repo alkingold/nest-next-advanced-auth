@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
 
 import { LoginDto } from '@/features/auth/dtos';
@@ -14,7 +15,9 @@ type LoginMutationInputType = {
   recaptcha: string;
 };
 
-export function useLoginMutation() {
+export function useLoginMutation(
+  setIsShowTwoFactor: Dispatch<SetStateAction<boolean>>,
+) {
   const router = useRouter();
   const { mutate: login, isPending: isLoadingLogin } = useMutation({
     mutationKey: ['login user'],
@@ -23,6 +26,7 @@ export function useLoginMutation() {
     onSuccess: (data) => {
       if (hasMessage(data)) {
         messageToast(data);
+        setIsShowTwoFactor(true);
       } else {
         toast.success('Logged in', {
           description: 'You are successfully logged in.',
