@@ -119,7 +119,8 @@ export class AuthService {
         },
       });
 
-      return this.saveSession(req, existingAccount.user);
+      await this.saveSession(req, existingAccount.user);
+      return existingAccount.user;
     }
 
     // check if a user with this email already exists
@@ -148,7 +149,8 @@ export class AuthService {
         },
       });
 
-      return this.saveSession(req, existingUser);
+      await this.saveSession(req, existingUser);
+      return existingUser;
     }
 
     // create a new user and account within a transaction
@@ -183,7 +185,8 @@ export class AuthService {
       return user;
     });
 
-    return this.saveSession(req, newUser);
+    await this.saveSession(req, newUser);
+    return newUser;
   }
 
   public async login(req: Request, dto: LoginDto) {
@@ -230,7 +233,8 @@ export class AuthService {
       );
     }
 
-    return this.saveSession(req, user);
+    await this.saveSession(req, user);
+    return user;
   }
 
   public async logout(req: Request, res: Response): Promise<void> {
@@ -239,10 +243,9 @@ export class AuthService {
     res.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
   }
 
-  public async saveSession(req: Request, user: User): Promise<{ user: User }> {
+  public async saveSession(req: Request, user: User): Promise<void> {
     req.session.userId = user.id;
     const session = new SessionUtils(req);
     await session.safeSessionSave();
-    return { user };
   }
 }

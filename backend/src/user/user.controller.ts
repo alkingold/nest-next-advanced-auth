@@ -11,6 +11,7 @@ import { UserRole } from '@prisma/generated/enums';
 import { Authorization } from '@src/auth/decorators/auth.decorator';
 import { Authorized } from '@src/auth/decorators/authorized.decorator';
 import { UpdateUserDto } from '@src/user/dto/update-user.dto';
+import { UserEntity } from '@src/user/entities/user.entity';
 
 import { UserService } from './user.service';
 
@@ -22,14 +23,16 @@ export class UserController {
   @Get('profile')
   @HttpCode(HttpStatus.OK)
   public async findProfile(@Authorized('id') userId: string) {
-    return this.userService.findById(userId);
+    const user = await this.userService.findById(userId);
+    return new UserEntity(user);
   }
 
   @Authorization(UserRole.ADMIN)
   @Get('by-id/:id')
   @HttpCode(HttpStatus.OK)
   public async findById(@Param('id') id: string) {
-    return this.userService.findById(id);
+    const user = await this.userService.findById(id);
+    return new UserEntity(user);
   }
 
   @Authorization()
@@ -38,6 +41,7 @@ export class UserController {
     @Authorized('id') userId: string,
     @Body() dto: UpdateUserDto,
   ) {
-    return this.userService.update(userId, dto);
+    const updatedUser = await this.userService.update(userId, dto);
+    return new UserEntity(updatedUser);
   }
 }

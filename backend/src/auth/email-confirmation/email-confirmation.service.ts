@@ -84,7 +84,8 @@ export class EmailConfirmationService {
     });
 
     // Create user session
-    return this.authService.saveSession(req, existingUser);
+    await this.authService.saveSession(req, existingUser);
+    return existingUser;
   }
 
   public async sendVerificationToken(email: string) {

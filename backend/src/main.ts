@@ -3,9 +3,9 @@ import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import { createClient } from 'redis';
 
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { parseBoolean } from '@src/libs/common/utils/parse-boolean.util';
 import {
   StringValue,
@@ -38,6 +38,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.use(
     session({

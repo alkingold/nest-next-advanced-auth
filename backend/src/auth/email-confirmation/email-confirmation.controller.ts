@@ -8,6 +8,7 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
+import { UserEntity } from '@src/user/entities/user.entity';
 
 import { ConfirmationDto } from './dto/confirmation.dto';
 import { EmailConfirmationService } from './email-confirmation.service';
@@ -24,6 +25,10 @@ export class EmailConfirmationController {
     @Req() req: Request,
     @Body() dto: ConfirmationDto,
   ) {
-    return this.emailConfirmationService.newVerification(req, dto);
+    const result = await this.emailConfirmationService.newVerification(
+      req,
+      dto,
+    );
+    return new UserEntity(result);
   }
 }
