@@ -20,6 +20,7 @@ import { LoginDto } from '@src/auth/dto/login.dto';
 import { RegisterDto } from '@src/auth/dto/register.dto';
 import { AuthProviderGuard } from '@src/auth/guards/provider.guard';
 import { ProviderService } from '@src/auth/provider/provider.service';
+import { UserEntity } from '@src/user/entities/user.entity';
 
 import { AuthService } from './auth.service';
 
@@ -42,7 +43,12 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(@Req() req: Request, @Body() dto: LoginDto) {
-    return this.authService.login(req, dto);
+    const result = await this.authService.login(req, dto);
+    if ('message' in result) {
+      return result;
+    }
+
+    return { user: new UserEntity(result) };
   }
 
   @UseGuards(AuthProviderGuard)
