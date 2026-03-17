@@ -7,3 +7,8 @@ export * from './Label';
 export * from './Loading';
 export * from './Toaster';
 export * from './ToggleTheme';
+export * from './Avatar';
+export * from './Skeleton';
+export * from './Error';
+export * from './EmptyState';
+export * from './Switch';

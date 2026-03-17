@@ -1,6 +1,10 @@
 import { hash } from 'argon2';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AuthMethod } from '@prisma/generated/enums';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { UpdateUserDto } from '@src/user/dto/update-user.dto';
@@ -65,7 +69,20 @@ export class UserService {
   }
 
   public async update(userId: string, dto: UpdateUserDto) {
-    const user = await this.findById(userId);
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: { id: true, method: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found, please check entered data');
+    }
+
+    if (dto.isTwoFactorEnabled && user?.method !== AuthMethod.CREDENTIALS) {
+      throw new BadRequestException(
+        'Two-factor authentication is not available for this account',
+      );
+    }
 
     const updatedUser = await this.prismaService.user.update({
       where: {
@@ -74,7 +91,10 @@ export class UserService {
       data: {
         email: dto.email,
         displayName: dto.name,
-        isTwoFactorEnabled: dto.isTwoFactorEnabled,
+        isTwoFactorEnabled:
+          user.method === AuthMethod.CREDENTIALS
+            ? dto.isTwoFactorEnabled
+            : false,
       },
     });
 
