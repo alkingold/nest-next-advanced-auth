@@ -22,6 +22,14 @@ export class UserEntity {
   @Expose()
   picture?: string | null;
 
+  @Expose()
+  isTwoFactorEnabled!: boolean;
+
+  @Expose()
+  get isTwoFactorAvailable(): boolean {
+    return this.method === AuthMethod.CREDENTIALS;
+  }
+
   // Protected fields
 
   @Exclude()
@@ -32,9 +40,6 @@ export class UserEntity {
 
   @Exclude()
   isVerified!: boolean;
-
-  @Exclude()
-  isTwoFactorEnabled!: boolean;
 
   @Exclude()
   method!: AuthMethod;

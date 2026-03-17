@@ -113,8 +113,14 @@ export class FetchClient {
       throw new FetchError(response.status, message);
     }
 
+    const contentType = response.headers.get('content-type');
+
+    if (contentType && contentType.includes('application/json')) {
+      return response.json() as Promise<T>;
+    }
+
     // Parse and return JSON response
-    return response.json() as Promise<T>;
+    return undefined as T;
   }
 
   private createSearchParams(params: TypeSearchParams): string {
