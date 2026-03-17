@@ -90,7 +90,6 @@ export class BaseOAuthService {
 
     const user = await userRequest.json();
     const userData = await this.extractUserInfo(user);
-    console.log('USER DATA', userData);
 
     return {
       ...userData,
