@@ -5,3 +5,5 @@ export * from './NewPasswordForm';
 export * from './NewVerificationForm';
 export * from './RegisterForm';
 export * from './ResetPasswordForm';
+export * from './LoginContainer';
+export * from './LoginTwoFactorForm';

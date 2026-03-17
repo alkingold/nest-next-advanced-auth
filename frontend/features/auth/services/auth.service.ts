@@ -1,4 +1,4 @@
-import { LoginDto, RegisterDto } from '@/features/auth/dtos';
+import { LoginDto, LoginTwoFactorDto, RegisterDto } from '@/features/auth/dtos';
 import {
   AuthActionType,
   IUser,
@@ -27,16 +27,20 @@ class AuthService {
     return api.get<OAuthRedirectResponse>(`auth/oauth/connect/${provider}`);
   }
 
-  public login(body: LoginDto, recaptcha?: string) {
+  public login(body: LoginDto | LoginTwoFactorDto, recaptcha?: string) {
     const headers = recaptcha
       ? {
           'X-Recaptcha-Token': recaptcha,
         }
       : undefined;
 
-    return api.post<IUser | AuthActionType, LoginDto>('auth/login', body, {
-      headers,
-    });
+    return api.post<IUser | AuthActionType, LoginDto | LoginTwoFactorDto>(
+      'auth/login',
+      body,
+      {
+        headers,
+      },
+    );
   }
 
   public logout() {

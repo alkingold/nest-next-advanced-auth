@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { LoginForm } from '@/features/auth/components';
+import { LoginContainer } from '@/features/auth/components/LoginContainer';
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return <LoginContainer />;
 }

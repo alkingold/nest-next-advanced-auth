@@ -3,21 +3,25 @@ import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
 
-import { LoginDto } from '@/features/auth/dtos';
+import { LoginDto, LoginTwoFactorDto } from '@/features/auth/dtos';
 import { authService } from '@/features/auth/services';
 import { hasMessage } from '@/features/auth/types';
 
 import { messageToast } from '@/shared/utils';
 import { errorMessageToast } from '@/shared/utils/errorMessageToast';
 
-type LoginMutationInputType = {
-  values: LoginDto;
-  recaptcha: string;
+export type LoginMutationInputType = {
+  values: LoginDto | LoginTwoFactorDto;
+  recaptcha?: string;
 };
 
-export function useLoginMutation(
-  setIsShowTwoFactor: Dispatch<SetStateAction<boolean>>,
-) {
+export function useLoginMutation({
+  onTwoFactorRequired,
+  onLoginSuccess,
+}: {
+  onTwoFactorRequired: () => void;
+  onLoginSuccess: () => void;
+}) {
   const router = useRouter();
   const { mutate: login, isPending: isLoadingLogin } = useMutation({
     mutationKey: ['login user'],
@@ -26,8 +30,9 @@ export function useLoginMutation(
     onSuccess: (data) => {
       if (hasMessage(data)) {
         messageToast(data);
-        setIsShowTwoFactor(true);
+        onTwoFactorRequired();
       } else {
+        onLoginSuccess();
         toast.success('Logged in', {
           description: 'You are successfully logged in.',
         });
